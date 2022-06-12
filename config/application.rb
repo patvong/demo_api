@@ -19,6 +19,9 @@ Bundler.require(*Rails.groups)
 
 module DemoApi
   class Application < Rails::Application
+
+    Dotenv::Railtie.load
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
 
