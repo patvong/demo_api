@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::API
-  before_action :authenticate_bearer_token
+  include ActionController::HttpAuthentication::Token::ControllerMethods
+  before_action :authenticate
 
   rescue_from Api::Errors::AuthenticationError, with: :deny_access
 
@@ -9,15 +10,11 @@ class ApplicationController < ActionController::API
 
   private
 
-  def authenticate_bearer_token
+  def authenticate
     return unless ActiveModel::Type::Boolean.new.cast(ENV["USE_AUTH"])
 
-    raise Api::Errors::AuthenticationError unless bearer_token == ENV['BEARER_TOKEN']
-  end
-
-  def bearer_token
-    pattern = /^Bearer /
-    header  = request.authorization
-    header.gsub(pattern, '') if header && header.match(pattern)
+    authenticate_or_request_with_http_token do |token, options|
+      ActiveSupport::SecurityUtils.secure_compare(token, ENV['BEARER_TOKEN'])
+    end
   end
 end
