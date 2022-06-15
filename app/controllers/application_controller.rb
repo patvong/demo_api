@@ -12,7 +12,7 @@ class ApplicationController < ActionController::API
   def authenticate_bearer_token
     return unless ActiveModel::Type::Boolean.new.cast(ENV["USE_AUTH"])
 
-    raise Api::Errors::AuthenticationError.new unless bearer_token == ENV['BEARER_TOKEN']
+    raise Api::Errors::AuthenticationError unless bearer_token == ENV['BEARER_TOKEN']
   end
 
   def bearer_token
